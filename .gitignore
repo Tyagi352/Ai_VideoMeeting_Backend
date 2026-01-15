@@ -46,3 +46,5 @@ Thumbs.db
 uploads
 # Readme
 README.md
+.vercel
+.env*.local
