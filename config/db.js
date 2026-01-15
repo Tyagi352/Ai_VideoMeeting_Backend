@@ -1,15 +1,14 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      // useNewUrlParser & useUnifiedTopology recommended
-    });
-    console.log('MongoDB connected');
-  } catch (err) {
-    console.error('MongoDB connection error', err);
-    process.exit(1);
+let isConnected = false;
+
+export const connectDB = async () => {
+  if (isConnected) return;
+
+  if (!process.env.MONGO_URI) {
+    throw new Error("MONGO_URI not defined");
   }
-};
 
-export default connectDB;
+  await mongoose.connect(process.env.MONGO_URI);
+  isConnected = true;
+};

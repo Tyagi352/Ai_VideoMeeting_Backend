@@ -11,8 +11,15 @@ dotenv.config();
 const app = express();
 
 // Connect DB
-connectDB();
-
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "DB connection failed" });
+  }
+});
 app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -85,6 +92,6 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// server.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
