@@ -50,7 +50,7 @@ app.use('/api/summary', summaryRoutes);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || '*', // later restrict to frontend URL
+    origin: allowedOrigins, // later restrict to frontend URL
     methods: ['GET', 'POST'],
   },
 });
