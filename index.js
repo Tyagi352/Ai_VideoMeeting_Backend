@@ -35,7 +35,7 @@ app.use(async (req, res, next) => {
     res.status(500).json({ error: "DB connection failed" });
   }
 });
-app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
