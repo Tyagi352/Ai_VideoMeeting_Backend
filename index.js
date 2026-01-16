@@ -11,7 +11,6 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:5173",
   "https://ai-videomeeting-frontend-1.onrender.com"
 ];
 
