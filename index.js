@@ -16,9 +16,14 @@ const server = http.createServer(app);
    ALLOWED ORIGINS
 ======================== */
 const allowedOrigins = [
+<<<<<<< HEAD
   // "https://ai-videomeeting-frontend-1.onrender.com",
   "http://localhost:5173",
   "http://localhost:5174"
+=======
+  "https://ai-videomeeting-frontend-1.onrender.com",
+  "http://localhost:5173"
+>>>>>>> 2a4691c5cb9ebf75c85f8a7fb7a7f2de51e6522e
 ];
 
 /* ========================
