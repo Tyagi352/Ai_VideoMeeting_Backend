@@ -16,9 +16,11 @@ const server = http.createServer(app);
    ALLOWED ORIGINS
 ======================== */
 const allowedOrigins = [
-  // "https://ai-videomeeting-frontend-1.onrender.com",
+  // "https://ai-videomeeting-frontend-1.onrender.com"
+  "https://guileless-sable-f1cfb8.netlify.app",
   "http://localhost:5173",
-  "http://localhost:5174"
+  "http://localhost:5174",
+
 ];
 
 /* ========================
