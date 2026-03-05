@@ -3,7 +3,7 @@ import path from "path";
 import fetch from "node-fetch";
 import Summary from "../models/Summary.js";
 
-const prompt= "You are an AI meeting assistant.Summarize the following meeting transcript.highlight key points and action items"
+const prompt = "You are an AI meeting assistant.Summarize the following meeting transcript.highlight key points and action items"
 
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
