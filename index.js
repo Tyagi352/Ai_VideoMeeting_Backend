@@ -20,8 +20,8 @@ const allowedOrigins = [
   "",
   "http://localhost:5173",
   "http://localhost:5174",
-  "https://ai-video-meeting-frontend.vercel.app"
-
+  "https://ai-video-meeting-frontend.vercel.app",
+  "https://ai-video-meeting-frontend-7smrw514w-tyagi352s-projects.vercel.app"
 ];
 
 /* ========================
@@ -44,18 +44,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* ========================
-   DB CONNECT (ONLY ONCE)
-======================== */
+   DB CONNECT
+ ======================== */
 connectDB()
-  .then(() => console.log("MongoDB Connected"))
+  .then(() => console.log("Database initialized"))
   .catch((err) => {
-    console.error("DB connection failed", err);
-    process.exit(1);
+    console.error("Critical DB initialization failure:", err.message);
+    // On Vercel, we don't process.exit(1) as it kills the instance.
+    // Instead, individual routes will fail if they need DB access.
   });
 
 /* ========================
    ROUTES
-======================== */
+ ======================== */
+app.get("/", (req, res) => {
+  res.json({ message: "AI Video Meeting API is running" });
+});
+
+app.get("/favicon.ico", (req, res) => res.status(204).end());
+
 app.use("/api/auth", authRoutes);
 app.use("/api/summary", summaryRoutes);
 
@@ -226,8 +233,15 @@ io.on("connection", (socket) => {
 
 /* ========================
    START SERVER
-======================== */
+ ======================== */
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () =>
-  console.log(`Server running on port ${PORT}`)
-);
+
+// Export app for Vercel
+export default app;
+
+// Only listen if running locally
+if (process.env.NODE_ENV !== "production") {
+  server.listen(PORT, () =>
+    console.log(`Server running on port ${PORT}`)
+  );
+}

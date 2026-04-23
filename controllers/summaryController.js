@@ -11,16 +11,14 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 /* ===============================
    Upload audio to AssemblyAI
 ================================ */
-const uploadAudioToAssemblyAI = async (filePath) => {
-  const buffer = fs.readFileSync(filePath);
-
+const uploadAudioToAssemblyAI = async (audioBuffer) => {
   const res = await fetch("https://api.assemblyai.com/v2/upload", {
     method: "POST",
     headers: {
       Authorization: process.env.ASSEMBLYAI_API_KEY,
       "Content-Type": "application/octet-stream",
     },
-    body: buffer,
+    body: audioBuffer,
   });
 
   if (!res.ok) {
@@ -95,15 +93,9 @@ export const createSummary = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const uploadsDir = path.join(process.cwd(), "uploads");
-    if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
+    console.log("Uploading audio buffer to AssemblyAI...");
+    const audioUrl = await uploadAudioToAssemblyAI(req.file.buffer);
 
-    const filename = `audio-${Date.now()}.webm`;
-    const filePath = path.join(uploadsDir, filename);
-    fs.writeFileSync(filePath, req.file.buffer);
-
-    console.log("Uploading audio...");
-    const audioUrl = await uploadAudioToAssemblyAI(filePath);
 
     console.log("Transcribing + summarizing...");
     const { transcript, summary } = await transcribeAndSummarize(audioUrl);
@@ -115,7 +107,7 @@ export const createSummary = async (req, res) => {
       participants,
       transcript,
       summary,
-      audioUrl: `/uploads/${filename}`,
+      audioUrl: "in-memory", // No local storage on Vercel
     });
 
     await record.save();
@@ -163,7 +155,7 @@ export const deleteSummary = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
-    if (record.audioUrl) {
+    if (record.audioUrl && record.audioUrl !== "in-memory") {
       const fp = path.join(process.cwd(), record.audioUrl.replace("/", ""));
       if (fs.existsSync(fp)) fs.unlinkSync(fp);
     }
