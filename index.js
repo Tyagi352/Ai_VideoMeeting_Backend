@@ -16,29 +16,33 @@ const server = http.createServer(app);
    ALLOWED ORIGINS
 ======================== */
 const allowedOrigins = [
-  // "https://ai-videomeeting-frontend-1.onrender.com"
-  "",
   "http://localhost:5173",
   "http://localhost:5174",
   "https://ai-video-meeting-frontend.vercel.app",
-  "https://ai-video-meeting-frontend-7smrw514w-tyagi352s-projects.vercel.app"
 ];
 
-/* ========================
-   CORS (ONLY ONCE)
-======================== */
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS not allowed"));
-      }
-    },
-    credentials: true
-  })
-);
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const isAllowed = !origin || 
+                    allowedOrigins.includes(origin) || 
+                    origin.endsWith(".vercel.app");
+
+  if (isAllowed && origin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  } else if (!origin) {
+    // For non-browser requests
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  }
+  
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+  next();
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -71,10 +75,18 @@ app.use("/api/summary", summaryRoutes);
 ======================== */
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
-    methods: ["GET", "POST"]
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
+
 
 const userSocketMap = new Map();
 const roomHostMap = new Map(); // Track host (first user) in each room
