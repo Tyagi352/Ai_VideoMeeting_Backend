@@ -23,14 +23,14 @@ const allowedOrigins = [
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  
+
   // Always set these headers for every request
   if (origin) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   } else {
     res.setHeader("Access-Control-Allow-Origin", "*");
   }
-  
+
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept");
@@ -41,7 +41,7 @@ app.use((req, res, next) => {
   if (req.method === "OPTIONS") {
     return res.status(204).end();
   }
-  
+
   next();
 });
 
@@ -255,7 +255,7 @@ export default app;
 
 // Only listen if running locally
 if (process.env.NODE_ENV !== "production") {
-  server.listen(PORT, () =>
+  server.listen(PORT, "0.0.0.0", () =>
     console.log(`Server running on port ${PORT}`)
   );
 }
