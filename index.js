@@ -253,9 +253,7 @@ const PORT = process.env.PORT || 5000;
 // Export app for Vercel
 export default app;
 
-// Only listen if running locally
-if (process.env.NODE_ENV !== "production") {
-  server.listen(PORT, "0.0.0.0", () =>
-    console.log(`Server running on port ${PORT}`)
-  );
-}
+// Always listen - required for Render and local dev
+server.listen(PORT, "0.0.0.0", () =>
+  console.log(`Server running on port ${PORT}`)
+);
