@@ -1,13 +1,12 @@
+import "dotenv/config";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import summaryRoutes from "./routes/summary.js";
 
-dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
